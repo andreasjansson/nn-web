@@ -5,6 +5,9 @@ class App
         $body = $('body')
         window.paper = Raphael(0, 0, $body.width(), $body.height())
 
+        # TODO: fix it so that dragging individual elements drags whole paper
+        new RaphaelZPD(window.paper, {zoom: true, pan: true, drag: true});
+
         @neurons = []
         neuronsByLayer = {}
         for layerIndex in [0...3]
