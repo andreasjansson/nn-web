@@ -4,7 +4,7 @@ class @Neuron extends Backbone.Model
         activation: .5
         bias: 0
         synapses: []
-        layerIndex: undefined
-        neuronIndex: undefined
+        layer: undefined
+        index: undefined
 #        outgoingSynapses: [] # how to add to a list like this in backbone? set() ...?
 #        incomingSynapses: []

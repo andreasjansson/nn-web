@@ -4,26 +4,46 @@ class App
 
         $body = $('body')
         window.paper = Raphael(0, 0, $body.width(), $body.height())
+        new RaphaelZPD(window.paper, zoom: true, pan: true, drag: false)
 
-        # TODO: fix it so that dragging individual elements drags whole paper
-        new RaphaelZPD(window.paper, {zoom: true, pan: true, drag: true});
+        @neurons = {}
+        @synapses = {}
 
-        @neurons = []
-        neuronsByLayer = {}
-        for layerIndex in [0...3]
-            for neuronIndex in [0...10]
-                neuron = new Neuron(layerIndex: layerIndex, neuronIndex: neuronIndex)
-                @neurons.push(neuron)
-                new NeuronView(model: neuron)
+        @socket = io.connect(sprintf('http://%s:%d', Options.SOCKET_HOST, Options.SOCKET_PORT))
+        @socket.emit('test')
+        @socket.on('update', @update)
 
-                if neuronIndex == 0
-                    neuronsByLayer[layerIndex] = [neuron]
-                else:
-                    neuronsByLayer[layerIndex].push(neuron)
-                if layerIndex > 0
-                    for previousNeuron in neuronsByLayer[layerIndex - 1]
-                        synapse = new Synapse(from: previousNeuron, to: neuron)
-                        synapseView = new SynapseView(model: synapse)
+    update: (layers, synapseDatas) =>
+        newNeurons = {}
+        for i, neurons of layers
+            for j, neuronData of neurons
+                id = neuronData.id
+                if id in @neurons
+                    newNeurons[id] = @neurons[id]
+                    delete @neurons[id]
+                else
+                    newNeurons[id] = new Neuron(layer: i, index: j)
+                    new NeuronView(model: newNeurons[id])
+                newNeurons[id].set(activation: neuronData.activation, bias: neuronData.bias)
+
+        for id, neuron of @neurons
+            neuron.destroy()
+
+        @neurons = newNeurons
+
+        newSynapses = {}
+        for i, synapseData of synapseDatas
+            id = synapseData.id
+            if id in @synapses
+                newSynapses[id] = @synapses[id]
+                delete @synapses[id]
+            else
+                newSynapses[id] = new Synapse(from: @neurons[synapseData.from], to: @neurons[synapseData.to])
+                new SynapseView(model: newSynapses[id])
+            newSynapses[id].set(weight: synapseData.weight)
+
+        for id, synapse of @synapses
+            synapse.destroy()
 
 
 $ -> new App

@@ -249,12 +249,16 @@ RaphaelZPD = function(raphaelPaper, o) {
 
 			me.setCTM(g, me.stateTf.inverse().translate(p.x - me.stateOrigin.x, p.y - me.stateOrigin.y));
 		} else if (me.state == 'move') {
+
 			// Move mode
 			if (!me.opts.drag) return;
 
 			var p = me.getEventPoint(evt).matrixTransform(g.getCTM().inverse());
 
-			me.setCTM(me.stateTarget, me.root.createSVGMatrix().translate(p.x - me.stateOrigin.x, p.y - me.stateOrigin.y).multiply(g.getCTM().inverse()).multiply(me.stateTarget.getCTM()));
+			me.setCTM(me.stateTarget,
+                      me.root.createSVGMatrix()
+                       .translate(p.x - me.stateOrigin.x, p.y - me.stateOrigin.y)
+                       .multiply(g.getCTM().inverse()).multiply(me.stateTarget.getCTM()));
 
 			me.stateOrigin = p;
 		}

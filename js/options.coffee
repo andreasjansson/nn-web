@@ -4,3 +4,6 @@ this.Options =
     SPACING_X: 150
     SPACING_Y: 50
     RADIUS: 20
+    SOCKET_HOST: 'localhost'
+    SOCKET_PORT: 8080
+    
