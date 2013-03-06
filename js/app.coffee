@@ -18,7 +18,7 @@ class App
         for i, neurons of layers
             for j, neuronData of neurons
                 id = neuronData.id
-                if id in @neurons
+                if id of @neurons
                     newNeurons[id] = @neurons[id]
                     delete @neurons[id]
                 else
@@ -33,8 +33,8 @@ class App
 
         newSynapses = {}
         for i, synapseData of synapseDatas
-            id = synapseData.id
-            if id in @synapses
+            id = synapseData.from + '-' + synapseData.to
+            if id of @synapses
                 newSynapses[id] = @synapses[id]
                 delete @synapses[id]
             else
@@ -45,5 +45,7 @@ class App
         for id, synapse of @synapses
             synapse.destroy()
 
+        @synapses = newSynapses
 
-$ -> new App
+
+$ -> window.app = new App
