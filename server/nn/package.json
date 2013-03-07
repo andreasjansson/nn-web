@@ -1,0 +1,5 @@
+{
+    "name": "nn",
+    "version": "0.0.1",
+    "main": "./build/Release/nn"
+}
