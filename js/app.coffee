@@ -15,8 +15,8 @@ class App
 
     update: (layers, synapseDatas) =>
         newNeurons = {}
-        for i, neurons of layers
-            for j, neuronData of neurons
+        for i, neuronDatas of layers
+            for j, neuronData of neuronDatas
                 id = neuronData.id
                 if id of @neurons
                     newNeurons[id] = @neurons[id]
