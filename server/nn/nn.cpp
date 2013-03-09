@@ -1,22 +1,19 @@
 #include <node.h>
 #include <thread>
+#include <dlfcn.h>
+#include <stdio.h>
+#include <iostream>
+#include "nnlib.h"
 
-// node-gyp build CXXFLAGS='-std=c++0x'
+// node-gyp build
 
 using namespace v8;
 
 bool started = false;
 
-double activation = 0;
-
-void my_thread() {
-  while(true) {
-    activation += .1;
-    if(activation > 1)
-      activation -= 1;
-    std::chrono::milliseconds dura(100);
-    std::this_thread::sleep_for(dura);
-  }
+void my_thread()
+{
+  loop();
 }
 
 Handle<Value> getID(Local<String> property, const AccessorInfo &info) {
@@ -24,7 +21,7 @@ Handle<Value> getID(Local<String> property, const AccessorInfo &info) {
 }
 
 Handle<Value> getActivation(Local<String> property, const AccessorInfo &info) {
-  return Number::New(activation);
+  return Number::New(get_b());
 }
 
 Handle<Value> getBias(Local<String> property, const AccessorInfo &info) {
