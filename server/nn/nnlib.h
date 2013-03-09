@@ -3,7 +3,7 @@
 
 extern "C" {
   void loop();
-  double get_b();
+  vector<Layer *> &get_layers();
 }
 
 #endif

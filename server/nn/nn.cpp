@@ -16,33 +16,60 @@ void my_thread()
   loop();
 }
 
+Neuron *neuron_from_info(const AccessorInfo &info) {
+  Local<Object> self = info.Holder();
+  Local<External> wrap = Local<External>::Cast(self->GetInternalField(0));
+  void* ptr = wrap->Value();
+  Neuron *neuron = static_cast<Neuron *>(ptr);
+  return neuron;
+}
+
 Handle<Value> getID(Local<String> property, const AccessorInfo &info) {
-  return Integer::New(0);
+  Neuron *neuron = neuron_from_info(info);
+  return Integer::New(neuron->id);
 }
 
 Handle<Value> getActivation(Local<String> property, const AccessorInfo &info) {
-  return Number::New(get_b());
+  Neuron *neuron = neuron_from_info(info);
+  return Number::New(neuron->activation);
 }
 
 Handle<Value> getBias(Local<String> property, const AccessorInfo &info) {
-  return Integer::New(0);
+  Neuron *neuron = neuron_from_info(info);
+  return Number::New(neuron->bias);
 }
 
 Handle<Value> getState(const Arguments& args) {
+
+  HandleScope scope;
 
   if(!started) {
     std::thread *t = new std::thread(my_thread);
     started = true;
   }
 
-  HandleScope scope;
-
   Handle<ObjectTemplate> neuron_templ = ObjectTemplate::New();
+  neuron_templ->SetInternalFieldCount(1);
   neuron_templ->SetAccessor(String::New("id"), getID);
   neuron_templ->SetAccessor(String::New("activation"), getActivation);
   neuron_templ->SetAccessor(String::New("bias"), getBias);
 
-  Handle<Array> neurons = Array::New(1);
+  Handle<Array> synapses = Array::New();
+
+  vector<Layer *> layers = get_layers();
+  Handle<Array> jsLayers = Array::New(layers.size());
+
+  for(int i = 0; i < layers.size(); i ++) {
+    Layer *layer = layers[i];
+    Handle<Array> jsLayer = Array::New(layer->size());
+    for(int j = 0; j < neurons.size(); j ++) {
+      Neuron *neuron = layers[j];
+      Handle<Object> jsNeuron = neuron_templ->NewInstance();
+      jsNeuron->SetInternalField(0, External::New(neuron));
+      jsLayer->Set(j, jsNeuron);
+    }
+    jsLayers->set(i, jsLayer);
+  }
 
   neurons->Set(0, neuron_templ->NewInstance());
 
