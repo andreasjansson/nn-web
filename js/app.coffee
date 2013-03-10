@@ -13,23 +13,28 @@ class App
         @socket.emit('test')
         @socket.on('update', @update)
 
+        @networkView = new NetworkView(width: $body.width(), height: $body.height())
+
     update: (layers, synapseDatas) =>
         newNeurons = {}
+        layerSizes = []
         for i, neuronDatas of layers
+            layerSizes.push(neuronDatas.length)
             for j, neuronData of neuronDatas
                 id = neuronData.id
                 if id of @neurons
                     newNeurons[id] = @neurons[id]
                     delete @neurons[id]
                 else
-                    newNeurons[id] = new Neuron(layer: i, index: j)
-                    new NeuronView(model: newNeurons[id])
+                    newNeurons[id] = new Neuron(layer: parseInt(i, 10), index: parseInt(j, 10))
+                    newNeurons[id].view = new NeuronView(model: newNeurons[id])
                 newNeurons[id].set(activation: neuronData.activation, bias: neuronData.bias)
 
         for id, neuron of @neurons
             neuron.destroy()
 
         @neurons = newNeurons
+        @networkView.setNeurons(@neurons, layerSizes)
 
         newSynapses = {}
         for i, synapseData of synapseDatas

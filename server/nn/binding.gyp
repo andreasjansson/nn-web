@@ -3,7 +3,7 @@
         {
             "target_name": "nn",
             "sources": ["nn.cpp"],
-            "cflags_cc": ["-std=c++0x"],
+            "cflags_cc": ["-std=c++0x -g"],
             "libraries": ["-lnn"]
         }
     ]

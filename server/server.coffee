@@ -21,10 +21,8 @@ io.sockets.on('connection', (socket) ->
     layers = [neurons]
     synapses = []
     setInterval ->
-        neurons = nn.getState()
-        layers = [neurons]
-        console.log(neurons[0].activation)
-        socket.emit('update', layers, synapses)
+        layers = nn.getState()
+        socket.emit('update', layers)
     , 500
     socket.emit('update', layers, synapses)
 )

@@ -26,7 +26,7 @@ Neuron *neuron_from_info(const AccessorInfo &info) {
 
 Handle<Value> getID(Local<String> property, const AccessorInfo &info) {
   Neuron *neuron = neuron_from_info(info);
-  return Integer::New(neuron->id);
+  return Integer::New((size_t)neuron);
 }
 
 Handle<Value> getActivation(Local<String> property, const AccessorInfo &info) {
@@ -44,6 +44,7 @@ Handle<Value> getState(const Arguments& args) {
   HandleScope scope;
 
   if(!started) {
+    setup();
     std::thread *t = new std::thread(my_thread);
     started = true;
   }
@@ -56,27 +57,22 @@ Handle<Value> getState(const Arguments& args) {
 
   Handle<Array> synapses = Array::New();
 
-  vector<Layer *> layers = get_layers();
-  Handle<Array> jsLayers = Array::New(layers.size());
+  Network *network = get_network();
+  Handle<Array> jsLayers = Array::New(network->layers.size());
 
-  for(int i = 0; i < layers.size(); i ++) {
-    Layer *layer = layers[i];
+  for(unsigned int i = 0; i < network->layers.size(); i ++) {
+    Layer *layer = network->layers[i];
     Handle<Array> jsLayer = Array::New(layer->size());
-    for(int j = 0; j < neurons.size(); j ++) {
-      Neuron *neuron = layers[j];
+    for(unsigned int j = 0; j < layer->size(); j ++) {
+      Neuron *neuron = (*layer)[j];
       Handle<Object> jsNeuron = neuron_templ->NewInstance();
       jsNeuron->SetInternalField(0, External::New(neuron));
       jsLayer->Set(j, jsNeuron);
     }
-    jsLayers->set(i, jsLayer);
+    jsLayers->Set(i, jsLayer);
   }
 
-  neurons->Set(0, neuron_templ->NewInstance());
-
-  return scope.Close(
-    neurons
-  );
-
+  return scope.Close(jsLayers);
 }
 
 void RegisterModule(Handle<Object> target) {

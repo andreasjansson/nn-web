@@ -1,9 +1,12 @@
 #ifndef NNLIB_H
 #define NNLIB_H
 
+#include "../../../../network.h"
+
 extern "C" {
   void loop();
-  vector<Layer *> &get_layers();
+  void setup();
+  Network *get_network();
 }
 
 #endif
