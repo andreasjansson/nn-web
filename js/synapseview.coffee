@@ -10,7 +10,7 @@ class @SynapseView extends Backbone.View
         @render()
 
     render: =>
-        grey = @model.get('weight') * 64 + 128
+        grey = @model.get('weight') * 40 + 128
         @line.attr('stroke', Raphael.rgb(grey, grey, grey))
 
     setPositions: (fromX, fromY, toX, toY) =>
