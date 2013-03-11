@@ -17,12 +17,10 @@ io.sockets.on('connection', (socket) ->
         layers.push(layer)
     synapses = [{from: 0, to: 10}, {from: 9, to: 11}]
     ###
-    neurons = nn.getState()
-    layers = [neurons]
-    synapses = []
+    [layers, synapses] = nn.getState()
     setInterval ->
-        layers = nn.getState()
-        socket.emit('update', layers)
+        [layers, synapses] = nn.getState()
+        socket.emit('update', layers, synapses)
     , 500
     socket.emit('update', layers, synapses)
 )

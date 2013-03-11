@@ -34,7 +34,6 @@ class App
             neuron.destroy()
 
         @neurons = newNeurons
-        @networkView.setNeurons(@neurons, layerSizes)
 
         newSynapses = {}
         for i, synapseData of synapseDatas
@@ -44,13 +43,15 @@ class App
                 delete @synapses[id]
             else
                 newSynapses[id] = new Synapse(from: @neurons[synapseData.from], to: @neurons[synapseData.to])
-                new SynapseView(model: newSynapses[id])
+                newSynapses[id].view = new SynapseView(model: newSynapses[id])
             newSynapses[id].set(weight: synapseData.weight)
 
         for id, synapse of @synapses
             synapse.destroy()
 
         @synapses = newSynapses
+
+        @networkView.setNeuronsAndSynapses(@neurons, @synapses, layerSizes)
 
 
 $ -> window.app = new App
