@@ -17,7 +17,7 @@ class @NeuronView extends Backbone.View
         @circle.attr('r', radius)
 
     render: =>
-        grey = @model.get('activation') * 255
+        grey = @model.get('activation') * 64 + 128
         @circle.attr('fill', Raphael.rgb(grey, grey, grey))
         return @
 

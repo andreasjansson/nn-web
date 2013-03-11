@@ -75,7 +75,7 @@ Handle<Value> getState(const Arguments& args) {
   synapse_templ->SetInternalFieldCount(1);
   synapse_templ->SetAccessor(String::New("from"), synapse_get_property);
   synapse_templ->SetAccessor(String::New("to"), synapse_get_property);
-  synapse_templ->SetAccessor(String::New("bias"), synapse_get_property);
+  synapse_templ->SetAccessor(String::New("weight"), synapse_get_property);
 
   Network *network = get_network();
 
